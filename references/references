@@ -1,0 +1,17 @@
+references
+[1] report of an audio coder: https://ccrma.stanford.edu/~bosse/proj/proj.html
+[2] review: http://www.engr.usask.ca/classes/CME/462/notes/nydsp97.pdf
+[3] bit allocation: http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.643.7899&rep=rep1&type=pdf
+[4] MPEG-1, layer 1: https://learning.oreilly.com/library/view/audio-signal-processing/9780471791478/ch005-sec007.html
+
+perceptual model & bit allocation
+perceptual model: masking
+i. tonal/noise masks (see [4])
+ii. temporal masking (see [1])
+iii. spreading function (masking spreads to neighbouring bands) ([1],[4])
+iv. addition of simultaneous masking ([1],[4])
+
+
+bit allocation:
+i. energy based (see [3])
+ii. global information
