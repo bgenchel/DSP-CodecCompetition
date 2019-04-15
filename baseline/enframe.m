@@ -13,6 +13,7 @@ function f = enframe(x, win, inc)
 %	F = ENFRAME(X,LEN,INC) has frames beginning at increments of INC
 %	The centre of frame I is X((I-1)*INC+(LEN+1)/2) for I=1,2,...
 %	The number of frames is fix((length(X)-LEN+INC)/INC)
+%       inc = hopsize
 %
 %	F = ENFRAME(X,WINDOW) or ENFRAME(X,WINDOW,INC) multiplies
 %	each frame by WINDOW(:)
@@ -39,19 +40,21 @@ function f = enframe(x, win, inc)
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-nx=length(x);
-nwin=length(win);
+nx = length(x);
+nwin = length(win);
 if (nwin == 1)
    len = win;
 else
    len = nwin;
 end
+
 if (nargin < 3)
    inc = len;
 end
-nf = fix((nx-len+inc)/inc);
-f=zeros(nf,len);
-indf= inc*(0:(nf-1)).';
+
+nf = fix((nx - len + inc) / inc);
+f = zeros(nf, len);
+indf = inc * (0:(nf-1)).';
 inds = (1:len);
 f(:) = x(indf(:,ones(1,len))+inds(ones(nf,1),:));
 if (nwin > 1)

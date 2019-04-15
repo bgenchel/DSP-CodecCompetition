@@ -47,32 +47,33 @@ sig = sin(2 * pi * 1000 * (1:N/2) / Fs);
 win = (0.5 - 0.5 * cos((2 * pi * (1:N/2) - 0.5) / (N/2))); 
 fftmax = max(abs(fft(sig .* win))); % defined as 96dB, strongest frequency
 
-%   Enframe Audio   
-frames = enframe(Y, N, N/2);
+%   Enframe Audio (divide into frames) 
+frames = enframe(Y, N, N/2); 
 
 % Write File Header 
-fid = fopen(codedFile,'w');
+fid = fopen(codedFile, 'w');
 fwrite(fid, Fs, 'ubit16'); % Sampling Frequency
 fwrite(fid, N, 'ubit12'); % Frame Length
 fwrite(fid, bitrate, 'ubit18'); % Bit Rate
 fwrite(fid, scalebits, 'ubit4'); % Number of Scale Bits per Sub-Band
 fwrite(fid, length(frames(:,1)), 'ubit26'); % Number of frames
     
-numBands = floor(fftbark(N/2,N/2,Fs))+1;
+% fftbark - converts fft bin number to bark scale
+numBands = floor(fftbark(N/2, N/2, Fs)) + 1;
 
 %   Computations    
 for frame_count=1:length(frames(:,1))
 
-    if mod(frame_count,10) == 0
+    if mod(frame_count, 10) == 0
         outstring = sprintf('Now Encoding Frame %i of %i', frame_count, length(frames(:,1)));
         disp(outstring);
     end
     
-    fft_frame = fft(frames(frame_count,:));
+    fft_frame = fft(frames(frame_count, :));
 
-    if fft_frame == zeros(1,N)
-        Gain = zeros(1,numBands);
-        bit_alloc = zeros(1,numBands);
+    if fft_frame == zeros(1, N)
+        Gain = zeros(1, numBands);
+        bit_alloc = zeros(1, numBands);
     else    
         len = length(fft_frame);
         peak_width = zeros(1,len);
