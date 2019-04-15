@@ -80,14 +80,14 @@ for frame_count=1:length(frames(:,1))
 
         % Find Peaks
         centers = find(diff(sign(diff( abs(fft_frame).^2) )) == -2) + 1;
-        spectral_density = zeros(1,length(centers));
+        spectral_density = zeros(1, length(centers));
     
-        peak_max = NaN*ones(size(centers));
+        peak_max = NaN * ones(size(centers));
         peak_min = NaN*ones(size(centers));
-        for k=1:numel(centers)
-            peak_max(k) = centers(k) +2;
+        for k=1:numel(centers) % could also use 'length' here
+            peak_max(k) = centers(k) + 2;
             peak_min(k) = centers(k) - 2;
-            peak_width(k) = peak_max(k) - peak_min(k);
+            peak_width(k) = peak_max(k) - peak_min(k); % always 4?
             
             for j=peak_min(k):peak_max(k)
                 if (j > 0) && (j < N)
@@ -95,24 +95,22 @@ for frame_count=1:length(frames(:,1))
                 end
             end
         end
-            
         % This gives the squared amplitude of the original signal
         % (this is here just for educational purposes)
-        modified_SD = spectral_density / ((N^2)/8);
-        SPL = 96 + 10*log10(modified_SD);
+        % modified_SD = spectral_density / ((N^2)/8);
+        % SPL = 96 + 10 * log10(modified_SD);
         
         % TRANSFORM FFT'S TO SPL VALUES
-        fft_spl = 96 + 20*log10(abs(fft_frame)/fftmax);
-    
+        fft_spl = 96 + 20 * log10(abs(fft_frame)/fftmax);
     
         % Threshold in Quiet
         f_kHz = (1:Fs/N:Fs/2)/1000;
-        A = 3.64*(f_kHz).^(-0.8) - 6.5*exp(-0.6*(f_kHz - 3.3).^2) + (10^(-3))*(f_kHz).^4;
+        A = 3.64 * (f_kHz).^(-0.8) - 6.5 * exp(-0.6 * (f_kHz - 3.3).^2) + (10^(-3))*(f_kHz).^4;
     
         % Masking Spectrum
         big_mask = max(A,Schroeder(Fs,N,centers(1)*Fs/N,fft_spl(centers(1)),...
-            14.5+bark(centers(1)*Fs/N)));
-        for peak_count=2:sum(centers*Fs/N<=Fs/2)
+            14.5 + bark(centers(1)*Fs/N)));
+        for peak_count=2:sum(centers * Fs/N<=Fs/2)
             big_mask = max(big_mask,Schroeder(Fs,N,centers(peak_count)*Fs/N,...
                 fft_spl(centers(peak_count)), 14.5+bark(centers(peak_count)*Fs/N)));
         end
