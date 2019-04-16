@@ -25,13 +25,13 @@ function decodedFile = full_codec(originalFile, bitrate, decodedFile, codedFile)
 % Copyright 2002, Jon Boley (jdb@jboley.com)
 
 if nargin < 4
-    codedFile = 'yourfile.jon';
+    codedFile = 'audio/yourfile.jon';
 end
 if nargin < 3
     decodedFile = 'yourfile_decoded.wav';
 end
 if nargin < 2
-    bitrate = 128000;
+    bitrate = 64000; % Required by the competition
 end
 if nargin < 1
     originalFile = 'yourfile.wav';

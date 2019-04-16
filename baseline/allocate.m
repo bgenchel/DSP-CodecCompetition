@@ -38,7 +38,7 @@ x = zeros(1,num_subbands);
 bitsleft = bits_per_frame;
 [~,ii]=max(bits);
 while bitsleft > num_crit_band_samples(ii)
-    [~,ii]=max(bits);
+    [~,ii]=max(bits); % this line should be at the end of the while loop...
     x(ii) = x(ii) + 1;
     bits(ii) = bits(ii) - 1;
     bitsleft=bitsleft-num_crit_band_samples(ii);
