@@ -1,10 +1,12 @@
-function x = allocate(y, bitrate, scalebits, N, Fs)
+function x = allocate_uni(y, bitrate, scalebits, N, Fs)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %        ALLOCATE           %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % x=allocate(y,b,sb,N,Fs)
 % Allocates b bits to the 25 subbands
 % of y (a length N/2 MDCT, in dB SPL)
+
+% modified by Jiawen: allocate same number of bits to positive 'bits'
 
 % artifact reduction (reduce high frequency bands at low bitrates)
 numBandsToIgnore = 2*floor(128000/bitrate);
@@ -34,13 +36,27 @@ for ii=1:N/2
     num_crit_band_samples(crit_band(ii)) = num_crit_band_samples(crit_band(ii)) + 1;
 end
 
+%{
 x = zeros(1,num_subbands);
 bitsleft = bits_per_frame;
 [~,ii]=max(bits);
 while bitsleft > num_crit_band_samples(ii)
+    [~,ii]=max(bits); % this line should be at the end of the while loop...
     x(ii) = x(ii) + 1;
     bits(ii) = bits(ii) - 1;
     bitsleft=bitsleft-num_crit_band_samples(ii);
-    [~,ii]=max(bits); % this line should be at the end of the while loop...
 end
 end
+%}
+
+% if we allocate the same number of bits for each band...
+t = floor(bits_per_frame/sum(num_crit_band_samples(bits>0)));
+if t > 15
+    t = 15;
+end
+x = zeros(1, num_subbands);
+indices = find(bits > 0);
+for iii = 1:length(indices)
+    x(indices(iii)) = t;
+end
+bitsleft =  bits_per_frame - x * num_crit_band_samples;

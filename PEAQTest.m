@@ -1,8 +1,8 @@
 clear; clc; 
 
-addpath('baseline', genpath('PEAQ'));
+addpath('baseline', genpath('workspace'), genpath('PEAQ'));
 
-filename = 'cathy'; % ODG: -2.002
+filename = 'flute-A4-96k'; % ODG: -2.002
 
 orig = ['audio/' filename '.wav'];
 ref = ['audio/' filename '_48k.wav'];
@@ -15,6 +15,6 @@ if exist(ref, 'file') ~= 2
     audiowrite(ref, y, 48000);
 end
 
-decodedFile = full_codec(ref, 64000, test);
+decodedFile = full_codec_separate(ref, 64000, test);
 
 [odg, movb] = PQevalAudio_fn(ref, test);

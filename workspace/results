@@ -1,0 +1,22 @@
+bit allocation test:
+
+testing file:	cathy.wav
+
+		function		|		odg		|	description
+		allocate			-2.002			original file
+		allocate 	 		-1.990			fix the bug in while loop
+		allocate_uni		-1.823			allocate the same number of bits to each critical band that have positive 'bits' value
+
+testing file:	sine-440-96k.wav
+
+		function		|		odg		|	description
+		allocate			-3.913			original file
+		allocate 	 		-3.913			fix the bug in while loop
+		allocate_uni		-3.913			allocate the same number of bits to each critical band that have positive 'bits' value
+
+testing file:	flute-A4-96k.wav
+
+		function		|		odg		|	description
+		allocate			-2.528			original file
+		allocate 	 		-2.495			fix the bug in while loop
+		allocate_uni		-2.468			allocate the same number of bits to each critical band that have positive 'bits' value
