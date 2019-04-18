@@ -2,7 +2,7 @@ clear; clc;
 
 addpath('baseline', genpath('workspace'), genpath('PEAQ'));
 
-filename = 'flute-A4-96k'; % ODG: -2.002
+filename = 'cathy'; % ODG: -2.002
 
 orig = ['audio/' filename '.wav'];
 ref = ['audio/' filename '_48k.wav'];

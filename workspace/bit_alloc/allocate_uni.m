@@ -1,4 +1,4 @@
-function x = allocate_uni(y, bitrate, scalebits, N, Fs)
+function x = allocate_uni(y, bits_num, N, Fs, num_subbands, numBandsToIgnore)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %        ALLOCATE           %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -8,11 +8,7 @@ function x = allocate_uni(y, bitrate, scalebits, N, Fs)
 
 % modified by Jiawen: allocate same number of bits to positive 'bits'
 
-% artifact reduction (reduce high frequency bands at low bitrates)
-numBandsToIgnore = 2*floor(128000/bitrate);
-
-num_subbands = floor(fftbark(N/2,N/2,Fs))+1;
-bits_per_frame = floor(((bitrate/Fs)*(N/2)) - (scalebits*num_subbands));
+bits_per_frame = bits_num;
         
 bits(floor(bark( (Fs/2)*(1:N/2)/(N/2) )) +1) = 0;
 
