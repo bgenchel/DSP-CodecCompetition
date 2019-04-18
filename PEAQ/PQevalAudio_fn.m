@@ -101,7 +101,7 @@ MOVB = PQavgMOVB (MOVC, Nchan, Nwup);
 ODG = PQnNet (MOVB);
 
 % Summary printout
-PQprtMOV (MOVB, ODG);
+% PQprtMOV (MOVB, ODG);
 
 %----------
 function PQ_CheckWAV (WAV)
@@ -142,8 +142,8 @@ Ns = WAV(1).Nframe;
 % Data boundaries (determined from the reference file)
 if (PQopt.DataBounds)
     Lim = PQdataBoundary (WAV(1), Nchan, StartS(1), Ns);
-    fprintf ('PEAQ Data Boundaries: %ld (%.3f s) - %ld (%.3f s)\n', ...
-             Lim(1), Lim(1)/WAV(1).Fs, Lim(2), Lim(2)/WAV(1).Fs);
+    % fprintf ('PEAQ Data Boundaries: %ld (%.3f s) - %ld (%.3f s)\n', ...
+    %         Lim(1), Lim(1)/WAV(1).Fs, Lim(2), Lim(2)/WAV(1).Fs);
 else
     Lim = [Starts(1), StartS(1) + Ns - 1];
 end

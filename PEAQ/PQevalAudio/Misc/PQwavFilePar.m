@@ -23,10 +23,10 @@ WAV.iB = iB;   % Buffer number
 PQgetData (WAV, 0, 0);
 
 fprintf (' WAVE file: %s\n', File);
-if (WAV.Nchan == 1)
-    fprintf ('   Number of samples : %d (%.4g s)\n', WAV.Nframe, WAV.Nframe / WAV.Fs);
-else
-    fprintf ('   Number of frames  : %d (%.4g s)\n', WAV.Nframe, WAV.Nframe / WAV.Fs);
-end
-fprintf ('   Sampling frequency: %g\n', WAV.Fs);
-fprintf ('   Number of channels: %d (%d-bit integer)\n', WAV.Nchan, Nbit);
+%if (WAV.Nchan == 1)
+%    fprintf ('   Number of samples : %d (%.4g s)\n', WAV.Nframe, WAV.Nframe / WAV.Fs);
+%else
+%    fprintf ('   Number of frames  : %d (%.4g s)\n', WAV.Nframe, WAV.Nframe / WAV.Fs);
+%end
+%fprintf ('   Sampling frequency: %g\n', WAV.Fs);
+%fprintf ('   Number of channels: %d (%d-bit integer)\n', WAV.Nchan, Nbit);

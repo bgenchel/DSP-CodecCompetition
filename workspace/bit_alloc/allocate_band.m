@@ -8,3 +8,6 @@ end
 if method == 'uniform'
     x = allocate_uni(y, bits_num, N, Fs, num_subbands, numBandsToIgnore);
 end
+if method == 'var    '
+    x = allocate_var(y, bits_num, N, Fs, num_subbands, numBandsToIgnore);
+end

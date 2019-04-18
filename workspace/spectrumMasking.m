@@ -4,7 +4,7 @@ New_FFT_all = zeros(length(frames(:,1)), N/2);
 
 for frame_count=1:length(frames(:,1))
 
-    if mod(frame_count, 10) == 0
+    if mod(frame_count, 100) == 0
         outstring = sprintf('Now Masking Frame %i of %i', frame_count, length(frames(:,1)));
         disp(outstring);
     end

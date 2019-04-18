@@ -1,12 +1,10 @@
-clear; clc; 
+function odg = PEAQTest(filename, fdir)
 
-addpath('baseline', genpath('workspace'), genpath('PEAQ'));
+disp(filename);
 
-filename = 'cathy'; % ODG: -2.002
-
-orig = ['audio/' filename '.wav'];
-ref = ['audio/' filename '_48k.wav'];
-test = ['audio/' filename '_decoded.wav'];
+orig = [fdir filename '.wav'];
+ref = [fdir filename '_48k.wav'];
+test = [fdir 'decoded/' filename '_decoded.wav'];
 
 % resample the original file to 48k sr
 if exist(ref, 'file') ~= 2
