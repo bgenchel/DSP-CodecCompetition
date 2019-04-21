@@ -59,6 +59,8 @@ fwrite(fid, scalebits, 'ubit4'); % Number of Scale Bits per Sub-Band
 fwrite(fid, length(frames(:,1)), 'ubit26'); % Number of frames
     
 % fftbark - converts fft bin number to bark scale
+% bark scale maps frequency ranges in Hz to integer value. It is, in
+% itself, a means of grouping bins.
 numBands = floor(fftbark(N/2, N/2, Fs)) + 1;
 
 % Compute signal spectrum after masking

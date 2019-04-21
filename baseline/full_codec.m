@@ -150,7 +150,7 @@ for frame_count=1:length(frames(:,1))
         indices = find((floor(fftbark(1:N/2,N/2,Fs))+1)==ii);
         qbits = sprintf('ubit%i', bit_alloc(ii)); % bits(floor(fftbark(i,framelength/2,48000))+1)
         if bit_alloc(ii)>0
-            fwrite(fid, Data(indices(1):indices(end)) ,qbits);
+            fwrite(fid, Data(indices(1):indices(end)), qbits);
         end
     end
 end % end of frame loop
