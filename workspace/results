@@ -1,0 +1,43 @@
+bit allocation test:
+
+testing file:	cathy.wav
+
+		function		|		odg		|	description
+		default_default 	-2.957			fix the bug in while loop
+		default_uniform		-2.941			allocate the same number of bits to each critical band that have positive 'bits' value
+		energy_default		-2.918
+		sqrtstd_default		-2.876			
+		sqrtstd_uniform		[-2.845]
+
+testing file:	sine-440-96k.wav # let's ignore this file...
+
+		function		|		odg		|	description
+		allocate			-3.913			original file
+		default_default 	-3.913			fix the bug in while loop
+		default_uniform		-3.913			allocate the same number of bits to each critical band that have positive 'bits' value
+
+testing file:	flute-A4-96k.wav
+
+		function		|		odg		|	description
+		allocate			-2.528			original file
+		default_default 	-2.313			fix the bug in while loop
+		default_uniform		-2.328			allocate the same number of bits to each critical band that have positive 'bits' value
+		energy_default		-2.449
+		sqrtstd_default		[-2.292]			
+		sqrtstd_uniform		-2.295
+
+
+default_default
+Music:
+30s:	 		-2.1144   -2.3080   -1.8999   -2.1662   -1.9334		mean: -2.0844
+cropped	 :		-2.3070   -2.2855   -1.3340   -2.6863   -2.2449		mean: -2.1716
+
+well let's use the 30s files...
+
+Speech:
+-2.3212   -2.3268   -2.2515   -2.3927   -2.3455 	mean: -2.3275
+
+
+apply hann window
+cathy.wav				-2.8022
+flute-A4-96k.wav		-2.2550
