@@ -76,6 +76,6 @@ end
 % Write file
 audiowrite(decoded_filename, x3, Fs);
 
-soundsc(x3, Fs);
+% soundsc(x3, Fs);
 
 end

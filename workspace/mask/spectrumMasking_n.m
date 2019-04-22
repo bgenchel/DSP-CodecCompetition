@@ -1,4 +1,6 @@
-function New_FFT_all = spectrumMasking_m(frames, N, Fs, fftmax)
+function New_FFT_all = spectrumMasking_n(frames, N, Fs, fftmax)
+% tonal/noise
+% temporal masking
 
 % apply hann window
 w = hann(size(frames,2));
@@ -7,6 +9,8 @@ for i=1:size(frames,1)
 end
 
 % initialize outoput
+masks = zeros(length(frames(:,1)), N/2);
+spls = zeros(length(frames(:,1)), N/2);
 New_FFT_all = zeros(length(frames(:,1)), N/2);
 
 for frame_count=1:length(frames(:,1))
@@ -29,7 +33,7 @@ for frame_count=1:length(frames(:,1))
         peak_width = zeros(1,N/2);
         
         f_kHz = (1:Fs/N:Fs/2)/1000;
-        
+        %{
         tonal = [];
         noise = [];
         
@@ -62,7 +66,7 @@ for frame_count=1:length(frames(:,1))
                 tonal = [tonal i];
             end
         end
-        
+        %}
         % Find Peaks
         
         centers = find(diff(sign(diff( abs(fft_frame).^2) )) == -2) + 1;
@@ -90,7 +94,7 @@ for frame_count=1:length(frames(:,1))
         % Threshold in Quiet
         A = 3.64 * (f_kHz).^(-0.8) - 6.5 * exp(-0.6 * (f_kHz - 3.3).^2) + (10^(-3))*(f_kHz).^4;
         
-        %{
+        
         % Masking Spectrum
         big_mask = max(A,Schroeder(Fs,N,centers(1)*Fs/N,fft_spl(centers(1)),...
             14.5 + bark(centers(1)*Fs/N)));
@@ -104,7 +108,7 @@ for frame_count=1:length(frames(:,1))
             big_mask = max(big_mask,Schroeder(Fs,N,centers(peak_count)*Fs/N,...
                 fft_spl(centers(peak_count)), downshift));
         end
-        %}
+        %{
         big_mask = max(A,Schroeder(Fs,N,noise(1)*Fs/N,fft_spl(noise(1)),...
             14.5 + bark(noise(1)*Fs/N)));
         for peak_count=2:sum(noise * Fs/N<=Fs/2)
@@ -117,35 +121,61 @@ for frame_count=1:length(frames(:,1))
             big_mask = max(big_mask,Schroeder(Fs,N,tonal(peak_count)*Fs/N,...
                 fft_spl(tonal(peak_count)), 42.5-b));
         end
-        
-        
-
-        % Signal Spectrum - Masking Spectrum (with max of 0dB)
-        New_FFT = fft_spl-big_mask;
-        New_FFT_indices = find(New_FFT > 0);
-        New_FFT2 = zeros(1,N/2);
-        for ii=1:length(New_FFT_indices)
-            New_FFT2(New_FFT_indices(ii)) = New_FFT(New_FFT_indices(ii));
-        end
-    
-        if frame_count == 55 % no plots
-            semilogx(0:(Fs/2)/(N/2):Fs/2-1,fft_spl(1:N/2),'b');
-            hold on;
-            semilogx(0:(Fs/2)/(N/2):Fs/2-1,big_mask,'m');
-            hold off;
-            title('Signal (blue) and Masking Spectrum (pink)');
-            figure;
-            semilogx(0:(Fs/2)/(N/2):Fs/2-1,New_FFT2);
-            title('SMR');
-            %figure;
-            %stem(allocate(New_FFT2,bitrate,scalebits,N,Fs));
-            %title('Bits perceptually allocated');
-        end
-        
-        New_FFT_all(frame_count, :) = New_FFT2;
+        %}
+        masks(frame_count,:) = big_mask;
+        spls(frame_count,:) = fft_spl;
         
         % allocate later
         % bit_alloc = allocate(New_FFT2,bitrate,scalebits,N,Fs);
         % [Gain,Data] = p_encode(mdct(frames(frame_count,:)),Fs,N,bit_alloc,scalebits);
     end % end of If-Else Statement        
 end % end of frame loop
+
+f_hz = (1:Fs/N:Fs/2);
+tm = 0.008 + 100./f_hz * (0.03-0.008);
+
+for frame_count=length(frames(:,1)):-1:1
+    fft_spl = spls(frame_count,:);
+    sim_mask = masks(frame_count, :);
+    
+    temporal_masking = sim_mask;
+    for ii=1:N/2
+        if frame_count==1 % no previous frame, not post-masking
+            break;
+        end
+        %c0 = exp(-tm(ii)*((frame_count-1):-1:1));
+        c0 = 2.^(-((frame_count-1):-1:1)*N/2/Fs/0.04);
+        post_m = max(masks(1:(frame_count-1), ii)'.*c0);
+        temporal_masking(ii) = max(post_m, temporal_masking(ii));
+    end
+    
+     %big_mask = 20*((temporal_masking/20).^10+(sim_mask/20).^10).^0.1;
+     big_mask = max(temporal_masking, sim_mask);
+    
+    % temporal masking
+    
+    
+    % Signal Spectrum - Masking Spectrum (with max of 0dB)
+    New_FFT = fft_spl-big_mask;
+    New_FFT_indices = find(New_FFT > 0);
+    New_FFT2 = zeros(1,N/2);
+    for ii=1:length(New_FFT_indices)
+        New_FFT2(New_FFT_indices(ii)) = New_FFT(New_FFT_indices(ii));
+    end
+    
+    if frame_count == -1 % no plots
+        semilogx(0:(Fs/2)/(N/2):Fs/2-1,fft_spl(1:N/2),'b');
+        hold on;
+        semilogx(0:(Fs/2)/(N/2):Fs/2-1,big_mask,'m');
+        hold off;
+        title('Signal (blue) and Masking Spectrum (pink)');
+        figure;
+        semilogx(0:(Fs/2)/(N/2):Fs/2-1,New_FFT2);
+        title('SMR');
+        %figure;
+        %stem(allocate(New_FFT2,bitrate,scalebits,N,Fs));
+        %title('Bits perceptually allocated');
+    end
+        
+    New_FFT_all(frame_count, :) = New_FFT2;
+end

@@ -64,7 +64,7 @@ fwrite(fid, length(frames(:,1)), 'ubit26'); % Number of frames
 numBands = floor(fftbark(N/2, N/2, Fs)) + 1;
 
 % Compute signal spectrum after masking
-New_FFT_all = spectrumMasking_m(frames, N, Fs, fftmax);
+New_FFT_all = spectrumMasking_n(frames, N, Fs, fftmax);
 
 % Allocate bits and Encode
 [bit_alloc_all, Gain_all, Data_all] = allocate_encode_all(New_FFT_all, bitrate, scalebits, N, Fs, frames);

@@ -6,7 +6,7 @@ frame_num = size(y, 1);
 
 % allocate: set the last input as "default_default" 
 % to use the original implementation
-bit_alloc = allocate_main(y, bitrate, scalebits, N, Fs, "default_default");
+bit_alloc = allocate_main(y, bitrate, scalebits, N, Fs, "default_altn   ");
 
 for frame_count=1:frame_num
     % bit_alloc(frame_count,:) = allocate_band(y(frame_count,:),bit_per_frame(frame_count),N,Fs, num_subbands, bandsIgnore, 'default');
