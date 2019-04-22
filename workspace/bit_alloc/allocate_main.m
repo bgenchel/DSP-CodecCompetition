@@ -13,33 +13,27 @@ total_bits = floor(((bitrate/Fs)*(N/2) - (scalebits*num_subbands))*frame_num);
 if method == 'default_default' % default bit allocation
     bits_average = floor(((bitrate/Fs)*(N/2)) - (scalebits*num_subbands));
     bits_frame = ones(1, frame_num) * bits_average;
+    bitsleft = 0;
     for frame_count=1:frame_num
-        bit_alloc(frame_count,:) = allocate_band(y(frame_count,:),bits_frame(frame_count),N,Fs, num_subbands, bandsIgnore, 'default');
+        [bit_alloc(frame_count,:), bitsleft] = allocate_band(y(frame_count,:),bits_frame(frame_count)+bitsleft,N,Fs, num_subbands, bandsIgnore, 'default');
     end
 end
 
 if method == 'default_uniform' % uniformly allocate to bands in a frame
     bits_average = floor(((bitrate/Fs)*(N/2)) - (scalebits*num_subbands));
     bits_frame = ones(1, frame_num) * bits_average;
+    bitsleft = 0;
     for frame_count=1:frame_num
-        bit_alloc(frame_count,:) = allocate_band(y(frame_count,:),bits_frame(frame_count),N,Fs, num_subbands, bandsIgnore, 'uniform');
+        [bit_alloc(frame_count,:), bitsleft] = allocate_band(y(frame_count,:),bits_frame(frame_count)+bitsleft,N,Fs, num_subbands, bandsIgnore, 'uniform');
     end
 end
 
 if method == 'default_var' % uniformly allocate to bands in a frame
     bits_average = floor(((bitrate/Fs)*(N/2)) - (scalebits*num_subbands));
     bits_frame = ones(1, frame_num) * bits_average;
-    for frame_count=1:frame_num
-        bit_alloc(frame_count,:) = allocate_band(y(frame_count,:),bits_frame(frame_count),N,Fs, num_subbands, bandsIgnore, 'var    ');
-    end
-end
-
-if method == 'default_altn   '
-    bits_average = floor(((bitrate/Fs)*(N/2)) - (scalebits*num_subbands));
-    bits_frame = ones(1, frame_num) * bits_average;
     bitsleft = 0;
     for frame_count=1:frame_num
-        [bit_alloc(frame_count,:), bitsleft] = allocate_band(y(frame_count,:),bits_frame(frame_count)+bitsleft,N,Fs, num_subbands, bandsIgnore, 'altn   ');
+        [bit_alloc(frame_count,:), bitsleft] = allocate_band(y(frame_count,:),bits_frame(frame_count)+bitsleft,N,Fs, num_subbands, bandsIgnore, 'var    ');
     end
 end
 
@@ -49,6 +43,16 @@ end
 if method == 'energy_default' % assign by log energy across time, default/uniform within frame
     % although logarithmic addition doesn't really make sense...let's try
     sum_y = sum(y, 2);
+    p = sum_y/sum(sum_y);
+    bits_frame = floor(p * total_bits);
+    for frame_count=1:frame_num
+        bit_alloc(frame_count,:) = allocate_band(y(frame_count,:),bits_frame(frame_count),N,Fs, num_subbands, bandsIgnore, 'default');
+    end
+end
+
+if method == 'maxeng_default' % assign by log energy across time, default/uniform within frame
+    % although logarithmic addition doesn't really make sense...let's try
+    sum_y = max(y, [], 2);
     p = sum_y/sum(sum_y);
     bits_frame = floor(p * total_bits);
     for frame_count=1:frame_num

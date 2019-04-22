@@ -1,4 +1,4 @@
-function x = allocate_uni(y, bits_num, N, Fs, num_subbands, numBandsToIgnore)
+function [x, bitsleft] = allocate_uni(y, bits_num, N, Fs, num_subbands, numBandsToIgnore)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %        ALLOCATE           %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%

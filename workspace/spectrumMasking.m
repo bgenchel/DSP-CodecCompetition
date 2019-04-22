@@ -1,13 +1,10 @@
 function New_FFT_all = spectrumMasking(frames, N, Fs, fftmax)
-<<<<<<< HEAD
-=======
 %%
 % frames - audio frames 
 % N - frame length
 % Fs - sampling frequency
 % fftmax - reference for 96dB, the 'loudest' frequency, 1KHz
 
->>>>>>> 3e388fc3e3c7ccf51c0bb64c2e71a4ff195a3b11
 % initialize outoput
 New_FFT_all = zeros(length(frames(:, 1)), N/2);
 
@@ -79,13 +76,8 @@ for frame_count=1:length(frames(:,1))
             New_FFT2(New_FFT_indices(ii)) = New_FFT(New_FFT_indices(ii));
         end
     
-<<<<<<< HEAD
-        if frame_count >0 % no plots
-            semilogx(0:(Fs/2)/(N/2):Fs/2-1,fft_spl(1:N/2),'b');
-=======
         if frame_count == -1 % no plots
             semilogx(0:(Fs/2)/(N/2):Fs/2-1, fft_spl(1:N/2), 'b');
->>>>>>> 3e388fc3e3c7ccf51c0bb64c2e71a4ff195a3b11
             hold on;
             semilogx(0:(Fs/2)/(N/2):Fs/2-1, big_mask, 'm');
             hold off;

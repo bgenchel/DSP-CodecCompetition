@@ -1,4 +1,4 @@
-function x = allocate_default(y, bits_num, N, Fs, num_subbands, numBandsToIgnore)
+function [x, bitsleft] = allocate_default(y, bits_num, N, Fs, num_subbands, numBandsToIgnore)
 % This is the default allocate method (same as the baseline, but with
 % different input.) All bits_num bits are assigned to the data. No bits 
 % for 'scale bits'.

@@ -28,29 +28,23 @@ testing file:	flute-A4-96k.wav
 
 
 default_default
-Music:
-30s:	 		-2.1144   -2.3080   -1.8999   -2.1662   -1.9334		mean: -2.0844
-cropped	 :		-2.3070   -2.2855   -1.3340   -2.6863   -2.2449		mean: -2.1716
-
-well let's use the 30s files...
-
-Speech:
--2.3212   -2.3268   -2.2515   -2.3927   -2.3455 	mean: -2.3275
-
+speech: -2.3212   -2.3268   -2.2515   -2.3927   -2.3455 		mean: -2.3275
+music:	-2.1144   -2.3080   -1.8999   -2.1662   -1.9334			mean: -2.0844
 
 apply hann window
 cathy.wav				-2.8022
 flute-A4-96k.wav		-2.2550
-speech: -2.3161   -2.2861   -2.2147   -2.3591   -2.2739
-music:	-2.0973   -2.2905   -1.9064   -2.0994   -1.9895
+speech: -2.3161   -2.2861   -2.2147   -2.3591   -2.2739			mean: -2.2900
+music:	-2.0973   -2.2905   -1.9064   -2.0994   -1.9895			mean: -2.0766
 
 downshift:
 cathy.wav				-2.5800
 flute-A4-96k.wav		-2.1163
-speech:	-2.2099   -2.2348   -2.1787   -2.3264   -2.1794			[mean: -2.2258]
+speech:	-2.2099   -2.2348   -2.1787   -2.3264   -2.1794			mean: -2.2258
 music:	-2.0384   -2.3155   -1.8913   -2.0252   -1.9448			mean: -2.0430
 
-detect tonal/noise: not better; discard
+
+downshift: detect tonal/noise -> DISCARD
 speech: -2.2500   -2.2154   -2.1887   -2.3238   -2.2132			mean: -2.2382
 music:	-2.0507   -2.2642   -1.9301   -2.0483   -1.9666			mean: -2.0520
 
@@ -58,11 +52,24 @@ temporal masking:
 cathy.wav				-2.5766
 flute-A4-96k.wav		-2.1029
 speech:	-2.2133   -2.2218   -2.1832   -2.3483   -2.1774			mean: -2.2288
-music:	-2.0378   -2.3026   -1.8891   -2.0295   -1.9490			[mean: -2.0416]
+music:	-2.0378   -2.3026   -1.8891   -2.0295   -1.9490			mean: -2.0416
 
 collect remaining bits:
 cathy.wav				[-2.5571]
 flute-A4-96k.wav		[-2.0999]
-speech:	
-music:	-2.0260   -2.2841   -1.8855   -2.0229   -1.9415			[mean:-2.032]
+speech:	-2.2074   -2.2045   -2.1813   -2.3388   -2.1672			[mean:-2.2198]
+music:	-2.0260   -2.2841   -1.8855   -2.0229   -1.9415			[mean:-2.0320]
+
+
+playing with global bit allocation...
+					cathy.wav			flute-A4-96k.wav
+default_default:	-2.5571				-2.0999
+default_uniform:	-2.6560				-2.1597
+energy_default:		-2.5503				-2.0518				-> explore more on this?
+maxeng_default:		-2.5084				-2.1029
+sqrtstd_default:	-2.4738				-2.1127
+
+...
+
+
 

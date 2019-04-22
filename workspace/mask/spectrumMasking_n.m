@@ -1,4 +1,6 @@
 function New_FFT_all = spectrumMasking_n(frames, N, Fs, fftmax)
+% any suggestion for the function name?
+
 % tonal/noise
 % temporal masking
 
@@ -30,9 +32,9 @@ for frame_count=1:length(frames(:,1))
         % TRANSFORM FFT'S TO SPL VALUES
         fft_spl = 96 + 20 * log10(abs(fft_frame)/fftmax);
         fft_spl = fft_spl(1:N/2);
-        peak_width = zeros(1,N/2);
         
         f_kHz = (1:Fs/N:Fs/2)/1000;
+        
         %{
         tonal = [];
         noise = [];
@@ -67,43 +69,24 @@ for frame_count=1:length(frames(:,1))
             end
         end
         %}
+        
         % Find Peaks
-        
         centers = find(diff(sign(diff( abs(fft_frame).^2) )) == -2) + 1;
-        spectral_density = zeros(1, length(centers));
-    
-        peak_max = NaN * ones(size(centers));
-        peak_min = NaN*ones(size(centers));
-        for k=1:numel(centers) % could also use 'length' here
-            peak_max(k) = centers(k) + 2;
-            peak_min(k) = centers(k) - 2;
-            peak_width(k) = peak_max(k) - peak_min(k); % always 4???
-            
-            for j=peak_min(k):peak_max(k)
-                if (j > 0) && (j < N)
-                    spectral_density(k) = spectral_density(k) + abs(fft_frame(j))^2;
-                end
-            end
-        end
-        % This gives the squared amplitude of the original signal
-        % (this is here just for educational purposes)
-        % modified_SD = spectral_density / ((N^2)/8);
-        % SPL = 96 + 10 * log10(modified_SD);
         
-    
         % Threshold in Quiet
         A = 3.64 * (f_kHz).^(-0.8) - 6.5 * exp(-0.6 * (f_kHz - 3.3).^2) + (10^(-3))*(f_kHz).^4;
         
         
         % Masking Spectrum
+        k = 1; % factor for downshift
         big_mask = max(A,Schroeder(Fs,N,centers(1)*Fs/N,fft_spl(centers(1)),...
             14.5 + bark(centers(1)*Fs/N)));
         for peak_count=2:sum(centers * Fs/N<=Fs/2)
             b = bark(centers(peak_count)*Fs/N);
             if b >= 14.5
-                downshift = 14.5+b;
+                downshift = k * (14.5+b);
             else
-                downshift = 42.5-b;
+                downshift = k * (42.5-b);
             end
             big_mask = max(big_mask,Schroeder(Fs,N,centers(peak_count)*Fs/N,...
                 fft_spl(centers(peak_count)), downshift));
@@ -131,29 +114,27 @@ for frame_count=1:length(frames(:,1))
     end % end of If-Else Statement        
 end % end of frame loop
 
-f_hz = (1:Fs/N:Fs/2);
-tm = 0.008 + 100./f_hz * (0.03-0.008);
+% f_hz = (1:Fs/N:Fs/2);
+% tm = 0.008 + 100./f_hz * (0.03-0.008); % I don't know how to use this...
 
 for frame_count=length(frames(:,1)):-1:1
     fft_spl = spls(frame_count,:);
-    sim_mask = masks(frame_count, :);
+    sim_mask = masks(frame_count, :); % simultaneous masking
     
+    % temporal masking
     temporal_masking = sim_mask;
     for ii=1:N/2
         if frame_count==1 % no previous frame, not post-masking
             break;
         end
         %c0 = exp(-tm(ii)*((frame_count-1):-1:1));
-        c0 = 2.^(-((frame_count-1):-1:1)*N/2/Fs/0.04);
-        post_m = max(masks(1:(frame_count-1), ii)'.*c0);
+        c0 = 2.^(-((frame_count-1):-1:1)*N/2/Fs/0.04); % exponential decay
+        post_m = max(masks(1:(frame_count-1), ii)'.*c0); 
         temporal_masking(ii) = max(post_m, temporal_masking(ii));
     end
     
      %big_mask = 20*((temporal_masking/20).^10+(sim_mask/20).^10).^0.1;
      big_mask = max(temporal_masking, sim_mask);
-    
-    % temporal masking
-    
     
     % Signal Spectrum - Masking Spectrum (with max of 0dB)
     New_FFT = fft_spl-big_mask;

@@ -2,7 +2,7 @@ clear all;
 
 addpath('baseline', genpath('workspace'), genpath('PEAQ'));
 
-folder = 'audio/Speech/';
+folder = 'audio/Music/';
 
 ODG = [];
 
