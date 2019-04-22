@@ -1,4 +1,4 @@
-function decodedFile = full_codec_bitalloc(originalFile, bitrate, decodedFile, codedFile)
+function decodedFile = full_codec_separate(originalFile, bitrate, decodedFile, codedFile)
 % FULL_CODEC encodes and decodes an audio file
 %   decodedFile = FULL_CODEC(originalFile) encodes and decodes original file
 

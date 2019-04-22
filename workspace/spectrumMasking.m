@@ -4,8 +4,8 @@ function New_FFT_all = spectrumMasking(frames, N, Fs, fftmax)
 % N - frame length
 % Fs - sampling frequency
 % fftmax - reference for 96dB, the 'loudest' frequency, 1KHz
-
-% initialize outoput
+%%
+% initialize output
 New_FFT_all = zeros(length(frames(:, 1)), N/2);
 
 for frame_count=1:length(frames(:,1))
@@ -35,7 +35,9 @@ for frame_count=1:length(frames(:,1))
         for k=1:numel(centers) % could also use 'length' here
             peak_max(k) = centers(k) + 2;
             peak_min(k) = centers(k) - 2;
-            peak_width(k) = peak_max(k) - peak_min(k); % always 4???
+
+            peak_width(k) = peak_max(k) - peak_min(k); % always 4?
+
             
             for j=peak_min(k):peak_max(k)
                 if (j > 0) && (j < N)

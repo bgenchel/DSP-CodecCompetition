@@ -5,7 +5,7 @@ function [x, bitsleft] = allocate_var(y, bits_num, N, Fs, num_subbands, numBands
 % x=allocate(y,b,sb,N,Fs)
 % Allocates b bits to the 25 subbands
 % of y (a length N/2 MDCT, in dB SPL)
-
+%
 % modified by Jiawen: allocate same number of bits to positive 'bits'
 
 bits_per_frame = bits_num;

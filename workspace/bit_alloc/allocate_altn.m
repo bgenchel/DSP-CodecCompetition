@@ -1,13 +1,18 @@
 function [x, bitsleft] = allocate_altn(y, bits_num, N, Fs, num_subbands, numBandsToIgnore)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   ALLOCATE ALTERNATING    %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is the default allocate method (same as the baseline, but with
 % different input.) All bits_num bits are assigned to the data. No bits 
 % for 'scale bits'.
-
+%
 % Forget about the allocate function in the baseline folder...
 % input:    y, dB SPL for one frame
 %           bits_num, number of bits assigned for this frame
 %           N, FFT size
 %           Fs, sample rate
+%
+% modified by Jiawen:
 
 bits_per_frame = bits_num; % floor(((bitrate/Fs)*(N/2)) - (scalebits*num_subbands));
 

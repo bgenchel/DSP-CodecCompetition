@@ -1,8 +1,11 @@
 function [x, bitsleft] = allocate_default(y, bits_num, N, Fs, num_subbands, numBandsToIgnore)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     ALLOCATE DEFAULT      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is the default allocate method (same as the baseline, but with
 % different input.) All bits_num bits are assigned to the data. No bits 
 % for 'scale bits'.
-
+%
 % Forget about the allocate function in the baseline folder...
 % input:    y, dB SPL for one frame
 %           bits_num, number of bits assigned for this frame
