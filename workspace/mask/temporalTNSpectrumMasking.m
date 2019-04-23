@@ -1,8 +1,14 @@
-function New_FFT_all = spectrumMasking_n(frames, N, Fs, fftmax)
-% any suggestion for the function name?
-
-% tonal/noise
-% temporal masking
+function New_FFT_all = temporalTNSpectrumMasking(frames, N, Fs, fftmax)
+%%%%%%%%%%%%%%%%%%%%%%%%
+% SPECTRUM MASKING
+% w/ temporal masking & 
+% tonal / noise masking
+%%%%%%%%%%%%%%%%%%%%%%%%
+% frames - audio frames 
+% N - frame length
+% Fs - sampling frequency
+% fftmax - reference for 96dB, the 'loudest' frequency, 1KHz
+%%
 
 % apply hann window
 w = hann(size(frames,2));
@@ -10,29 +16,34 @@ for i=1:size(frames,1)
     frames(i,:) = frames(i,:).*w';
 end
 
-% initialize outoput
+% initialize output
 masks = zeros(length(frames(:,1)), N/2);
 spls = zeros(length(frames(:,1)), N/2);
 New_FFT_all = zeros(length(frames(:,1)), N/2);
 
-for frame_count=1:length(frames(:,1))
+% process each frame
+for frame_count=1:length(frames(:, 1))
 
+    % print processing status
     if mod(frame_count, 100) == 0
         outstring = sprintf('Now Masking Frame %i of %i', frame_count, length(frames(:,1)));
         disp(outstring);
     end
     
+    % take fft of windowed frame
     fft_frame = fft(frames(frame_count, :));
 
+    % if frame is perfect silence, nothing to be done
     if fft_frame == zeros(1, N)
         New_FFT_all(frame_count,:) = zeros(1, N/2);
     else    
         len = length(fft_frame);
 
-        % TRANSFORM FFT'S TO SPL VALUES
+        % transform fft to spl (sound pressure level) values
         fft_spl = 96 + 20 * log10(abs(fft_frame)/fftmax);
         fft_spl = fft_spl(1:N/2);
         
+        % frequency value in Hz for each bin in FFT
         f_kHz = (1:Fs/N:Fs/2)/1000;
         
         %{
@@ -79,34 +90,46 @@ for frame_count=1:length(frames(:,1))
         
         % Masking Spectrum
         k = 1; % factor for downshift
-        big_mask = max(A,Schroeder(Fs,N,centers(1)*Fs/N,fft_spl(centers(1)),...
-            14.5 + bark(centers(1)*Fs/N)));
-        for peak_count=2:sum(centers * Fs/N<=Fs/2)
-            b = bark(centers(peak_count)*Fs/N);
-            if b >= 14.5
-                downshift = k * (14.5+b);
+        big_mask = A;
+        for peak_count=1:sum(centers * Fs/N <= Fs/2)
+            center_freq = centers(peak_count) * Fs/N;
+            center_spl = fft_spl(centers(peak_count));
+            b = bark(center_freq); % critical band position
+            if b >= 14.5 % 14.5 ~ 2.5 KHz
+                downshift = k * (14.5 + b);
             else
-                downshift = k * (42.5-b);
+                downshift = k * (42.5 - b);
             end
-            big_mask = max(big_mask,Schroeder(Fs,N,centers(peak_count)*Fs/N,...
-                fft_spl(centers(peak_count)), downshift));
+            curr_mask = Schroeder(Fs, N, center_freq, center_spl, downshift);
+            big_mask = max(big_mask, curr_mask);
         end
+        
         %{
-        big_mask = max(A,Schroeder(Fs,N,noise(1)*Fs/N,fft_spl(noise(1)),...
-            14.5 + bark(noise(1)*Fs/N)));
-        for peak_count=2:sum(noise * Fs/N<=Fs/2)
-            b = bark(noise(peak_count)*Fs/N);
-            big_mask = max(big_mask,Schroeder(Fs,N,noise(peak_count)*Fs/N,...
-                fft_spl(noise(peak_count)), 14.5+b));
+        big_mask = A;
+        for peak_count=1:sum(noise * Fs/N <= Fs/2)
+            center_freq = noise(peak_count) * Fs/N;
+            center_spl = fft_spl(noise(peak_count));
+            b = bark(center_freq);
+            downshift = 14.5 + b;
+            curr_mask = Schroeder(Fs, N, center_freq, center_spl, downshift);
+            big_mask = max(big_mask, curr_mask);
         end
-        for peak_count=1:sum(tonal * Fs/N<=Fs/2)
-            b = bark(noise(peak_count)*Fs/N);
+        
+        for peak_count=1:sum(tonal * Fs/N <= Fs/2)
+            b = bark(tonal(peak_count) * Fs/N);
             big_mask = max(big_mask,Schroeder(Fs,N,tonal(peak_count)*Fs/N,...
                 fft_spl(tonal(peak_count)), 42.5-b));
+            center_freq = tonal(peak_count) * Fs/N;
+            center_spl = fft_spl(tonal(peak_count));
+            b = bark(center_freq);
+            downshift = 42.5 - b;
+            curr_mask = Schroeder(Fs, N, center_freq, center_spl, downshift);
+            big_mask = max(big_mask, curr_mask);
         end
         %}
-        masks(frame_count,:) = big_mask;
-        spls(frame_count,:) = fft_spl;
+        
+        masks(frame_count, :) = big_mask;
+        spls(frame_count, :) = fft_spl;
         
         % allocate later
         % bit_alloc = allocate(New_FFT2,bitrate,scalebits,N,Fs);
@@ -115,10 +138,10 @@ for frame_count=1:length(frames(:,1))
 end % end of frame loop
 
 % f_hz = (1:Fs/N:Fs/2);
-% tm = 0.008 + 100./f_hz * (0.03-0.008); % I don't know how to use this...
+% tm = 0.008 + 100./f_hz * (0.03 - 0.008); % I don't know how to use this...
 
-for frame_count=length(frames(:,1)):-1:1
-    fft_spl = spls(frame_count,:);
+for frame_count=length(frames(:, 1)):-1:1
+    fft_spl = spls(frame_count, :);
     sim_mask = masks(frame_count, :); % simultaneous masking
     
     % temporal masking

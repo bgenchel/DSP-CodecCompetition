@@ -40,14 +40,14 @@ if method == 'default_uniform' % uniformly allocate to bands in a frame
 end
 
 if method == 'default_var' % uniformly allocate to bands in a frame
-    bits_average = floor(((bitrate/Fs)*(N/2)) - (scalebits*num_subbands));
+    bits_average = floor(((bitrate/Fs)*(N/2)) - (scalebits * num_subbands));
     bits_frame = ones(1, frame_num) * bits_average;
     bitsleft = 0;
     for frame_count=1:frame_num
         [bit_alloc(frame_count, :), bitsleft] = allocate_band( ...
             y(frame_count, :), ...
             bits_frame(frame_count) + bitsleft, ... 
-            N,Fs, num_subbands, bandsIgnore, 'var    ' ...
+            N, Fs, num_subbands, bandsIgnore, 'var    ' ...
         );
     end
 end

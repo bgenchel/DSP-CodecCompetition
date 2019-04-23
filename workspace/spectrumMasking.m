@@ -54,26 +54,29 @@ for frame_count=1:length(frames(:,1))
         fft_spl = 96 + 20 * log10(abs(fft_frame) / fftmax);
     
         % Threshold in Quiet - with no other sounds, how loud each
-        % frequency needs to be to be heard. Should match the plot (approx.) 
-        % for human hearing from the slides.
+        % frequency needs to be to be heard / perceived. Should match 
+        % the plot (approx.) for human hearing from the slides.
         f_kHz = (1:(Fs/N):(Fs/2)) / 1000; % not sure what this division by 1000 is for
         A = 3.64 * (f_kHz).^(-0.8) - 6.5 * exp(-0.6 * (f_kHz - 3.3).^2) + (10^(-3)) * (f_kHz).^4;
     
         % Masking Spectrum - iteratively update the mask, max value among
         % quiet threshold and all schroeder masks calculated for each
-        % center freq. 
+        % center freq. The reasoning here is that the masking threshold at a
+        % frequency should be equal t
         big_mask = A; 
         for peak=1:sum(centers * Fs/N <= Fs/2)
             center_freq = centers(peak) * Fs / N;
             center_spl = fft_spl(centers(peak));
-            schroeder_mask = Schroeder(Fs, N, center_freq, center_spl, 14.5 + bark(centers(peak) * Fs/N));
+            downshift = 14.5 + bark(centers(peak) * Fs/N);
+            schroeder_mask = Schroeder(Fs, N, center_freq, center_spl, downshift);
             big_mask = max(big_mask, schroeder_mask);
         end
+      
 
         % Signal Spectrum - Masking Spectrum (with max of 0dB)
         New_FFT = fft_spl(1:N/2) - big_mask;
         New_FFT_indices = find(New_FFT > 0);
-        New_FFT2 = zeros(1, N/2);
+        New_FFT2 = zeros(1, N/2);ok
         for ii=1:length(New_FFT_indices)
             New_FFT2(New_FFT_indices(ii)) = New_FFT(New_FFT_indices(ii));
         end
