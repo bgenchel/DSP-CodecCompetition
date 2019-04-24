@@ -2,7 +2,7 @@ function [Quantized_Gain, quantized_words] = p_encode(x2, Fs, framelength, bit_a
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %        P_ENCODE           %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-N = floor(fftbark(framelength/2,framelength/2,Fs))+1;
+N = floor(fftbark(framelength/2,framelength/2, Fs))+1;
 Gain = ones(N,1);
 Quantized_Gain = zeros(N,1);
 
@@ -18,7 +18,7 @@ end
     
 quantized_words = zeros(size(x2));
 for ii=1:numel(x2)
-    quantized_words(ii) = midtread_quantizer(x2(ii), max(bit_alloc(floor(fftbark(ii,framelength/2,Fs))+1),0)+1e-10); % 03/20/03
+    quantized_words(ii) = midtread_quantizer(x2(ii), max(bit_alloc(floor(fftbark(ii,framelength/2, Fs))+1),0)+1e-10); % 03/20/03
 end
 end
 

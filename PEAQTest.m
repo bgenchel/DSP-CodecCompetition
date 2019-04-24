@@ -13,6 +13,6 @@ if exist(ref, 'file') ~= 2
     audiowrite(ref, y, 48000);
 end
 
-decodedFile = full_codec_separate(ref, 64000, test);
-
+% decodedFile = full_codec(ref, 64000, test);
+decodedFile = myCodec(ref, 64000, test);
 [odg, movb] = PQevalAudio_fn(ref, test);

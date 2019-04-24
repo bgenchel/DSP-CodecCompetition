@@ -5,7 +5,6 @@ function New_FFT_all = spectrumMasking_m(frames, N, Fs, fftmax)
 % Fs - sampling frequency
 % fftmax - reference for 96dB, the 'loudest' frequency, 1KHz
 %%
-
 % apply hann window
 w = hann(size(frames,2));
 for i=1:size(frames, 1)

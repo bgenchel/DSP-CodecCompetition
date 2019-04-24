@@ -87,7 +87,6 @@ for frame_count=1:length(frames(:, 1))
         % Threshold in Quiet
         A = 3.64 * (f_kHz).^(-0.8) - 6.5 * exp(-0.6 * (f_kHz - 3.3).^2) + (10^(-3))*(f_kHz).^4;
         
-        
         % Masking Spectrum
         k = 1; % factor for downshift
         big_mask = A;
@@ -142,17 +141,19 @@ end % end of frame loop
 
 for frame_count=length(frames(:, 1)):-1:1
     fft_spl = spls(frame_count, :);
-    sim_mask = masks(frame_count, :); % simultaneous masking
+    % simultaneous masking - what we already calculated, how frequencies 
+    % mask each other at the same point in time. 
+    sim_mask = masks(frame_count, :);
     
     % temporal masking
     temporal_masking = sim_mask;
     for ii=1:N/2
-        if frame_count==1 % no previous frame, not post-masking
+        if frame_count == 1 % no previous frame, not post-masking
             break;
         end
         %c0 = exp(-tm(ii)*((frame_count-1):-1:1));
-        c0 = 2.^(-((frame_count-1):-1:1)*N/2/Fs/0.04); % exponential decay
-        post_m = max(masks(1:(frame_count-1), ii)'.*c0); 
+        c0 = 2.^( -((frame_count-1):-1:1) * N/2/Fs/0.04); % exponential decay
+        post_m = max(masks(1:(frame_count - 1), ii)' .* c0); 
         temporal_masking(ii) = max(post_m, temporal_masking(ii));
     end
     
@@ -160,9 +161,9 @@ for frame_count=length(frames(:, 1)):-1:1
      big_mask = max(temporal_masking, sim_mask);
     
     % Signal Spectrum - Masking Spectrum (with max of 0dB)
-    New_FFT = fft_spl-big_mask;
+    New_FFT = fft_spl - big_mask;
     New_FFT_indices = find(New_FFT > 0);
-    New_FFT2 = zeros(1,N/2);
+    New_FFT2 = zeros(1, N/2);
     for ii=1:length(New_FFT_indices)
         New_FFT2(New_FFT_indices(ii)) = New_FFT(New_FFT_indices(ii));
     end

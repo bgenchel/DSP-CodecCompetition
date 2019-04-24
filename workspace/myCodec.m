@@ -1,4 +1,4 @@
-function decodedFile = full_codec_separate(originalFile, bitrate, decodedFile, codedFile)
+function decodedFile = myCodec(originalFile, bitrate, decodedFile, codedFile)
 % FULL_CODEC encodes and decodes an audio file
 %   decodedFile = FULL_CODEC(originalFile) encodes and decodes original file
 
@@ -47,7 +47,7 @@ sig = sin(2 * pi * 1000 * (1:N/2) / Fs);
 win = (0.5 - 0.5 * cos((2 * pi * (1:N/2) - 0.5) / (N/2))); 
 fftmax = max(abs(fft(sig .* win))); % defined as 96dB, strongest frequency
 
-%   Enframe Audio (divide into frames) 
+% Enframe Audio (divide into frames) 
 frames = enframe(Y, N, N/2); 
 
 % Write File Header 
@@ -72,13 +72,13 @@ New_FFT_all = temporalTNSpectrumMasking(frames, N, Fs, fftmax);
 % Write Audio Data to File
 for frame_count=1:length(frames(:,1))
     qbits = sprintf('ubit%i', scalebits);
-    fwrite(fid, Gain_all(:,frame_count), qbits);
+    fwrite(fid, Gain_all(:, frame_count), qbits);
     fwrite(fid, bit_alloc_all(frame_count,:), 'ubit4');
     for ii=1:numBands
-        indices = find((floor(fftbark(1:N/2,N/2,Fs))+1)==ii);
-        qbits = sprintf('ubit%i', bit_alloc_all(frame_count,ii)); % bits(floor(fftbark(i,framelength/2,48000))+1)
-        if bit_alloc_all(frame_count,ii)>0
-            fwrite(fid, Data_all(indices(1):indices(end),frame_count) ,qbits);
+        indices = find((floor(fftbark(1:N/2, N/2 ,Fs)) + 1) == ii);
+        qbits = sprintf('ubit%i', bit_alloc_all(frame_count, ii)); % bits(floor(fftbark(i,framelength/2,48000))+1)
+        if bit_alloc_all(frame_count, ii) > 0
+            fwrite(fid, Data_all(indices(1):indices(end), frame_count), qbits);
         end
     end
 end
@@ -87,7 +87,6 @@ fclose(fid);
 % RUN DECODER
 disp('Decoding...');
 p_decode(codedFile,decodedFile);
-
 disp('Okay, all done!');
 
 
